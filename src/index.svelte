@@ -22,22 +22,25 @@
   ];
 
   let moneyButton;
-  let moneyButtonLoaded = false;
+  let moneyButtonRendered = false;
+  let scriptLoaded = false
 
-  function handleScriptLoad(event) {
-    const options = Object.entries($$props)
+  const renderButton = props => {
+    const options = Object.entries(props)
       .filter(([k]) => propsList.indexOf(k) !== -1)
       .reduce((a, [k, v]) => Object.assign({}, a, { [k]: v }), {});
 
-    options.onLoad = (e) => {
+    options.onLoad = () => {
       if (typeof $$props.onLoad === 'function') {
         $$props.onLoad()
       }
-      moneyButtonLoaded = true
+      moneyButtonRendered = true
     }
 
     window.moneyButton.render(moneyButton, options);
   }
+
+  $: scriptLoaded && renderButton($$props)
 </script>
 
 <style>
@@ -69,7 +72,7 @@
     font-weight: bold;
     background-color: #fcfcfc;
     height: 100%;
-    padding: 5px;
+    padding: 5px 5px 5px 0;
     border: 1px solid #4772f6;
     border-radius: 20px;
   }
@@ -109,7 +112,7 @@
 
 <svelte:head>
   <script
-    on:load={handleScriptLoad}
+    on:load={() => scriptLoaded = true}
     defer
     src="https://www.moneybutton.com/moneybutton.js">
 
@@ -117,10 +120,10 @@
 </svelte:head>
 
 <div class="moneybutton">
-  <div class:hidden={!moneyButtonLoaded}>
+  <div class:hidden={!moneyButtonRendered}>
     <div bind:this={moneyButton} />
   </div>
-  {#if !moneyButtonLoaded}
+  {#if !moneyButtonRendered}
     <slot>
       <div class="outer">
         <div class="inner">
