@@ -28,5 +28,5 @@ Using Svelte Money Button is as simple as adding this component to your app:
 </div>
 ```
 
-It accepts all props similar to it's React counterpart. For the official React library check out the [docs](https://docs.moneybutton.com/docs/react-money-button.html).
+It accepts all props similar to it's React counterpart. For the official React library check out the [docs](https://docs.moneybutton.com/docs/mb-react.html).
 

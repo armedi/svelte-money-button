@@ -1,29 +1,41 @@
+<script context="module">
+  import { writable } from 'svelte/store'
+
+  const scriptHasLoaded = writable(false)
+  
+  const script = document.createElement('script')
+  script.defer = true
+  script.src = 'https://www.moneybutton.com/moneybutton.js'
+  script.onload = () => scriptHasLoaded.set(true)
+  
+  document.head.appendChild(script)
+</script>
+
 <script>
   const propsList = [
-    "to",
-    "amount",
-    "currency",
-    "label",
-    "successMessage",
-    "opReturn",
-    "outputs",
-    "cryptoOperations",
-    "clientIdentifier",
-    "buttonId",
-    "buttonData",
-    "type",
-    "onPayment",
-    "onCryptoOperations",
-    "onError",
-    "onLoad",
-    "editable",
-    "disabled",
-    "devMode"
+    'to',
+    'amount',
+    'currency',
+    'label',
+    'successMessage',
+    'opReturn',
+    'outputs',
+    'cryptoOperations',
+    'clientIdentifier',
+    'buttonId',
+    'buttonData',
+    'type',
+    'onPayment',
+    'onCryptoOperations',
+    'onError',
+    'onLoad',
+    'editable',
+    'disabled',
+    'devMode'
   ];
 
   let moneyButton;
   let moneyButtonRendered = false;
-  let scriptLoaded = false
 
   const renderButton = props => {
     const options = Object.entries(props)
@@ -40,8 +52,26 @@
     window.moneyButton.render(moneyButton, options);
   }
 
-  $: scriptLoaded && renderButton($$props)
+  $: $scriptHasLoaded && moneyButton && renderButton($$props)
 </script>
+
+
+<div class="moneybutton">
+  <div class:hidden={!moneyButtonRendered}>
+    <div bind:this={moneyButton} />
+  </div>
+  {#if !moneyButtonRendered}
+    <slot>
+      <div class="outer">
+        <div class="inner">
+          <span class="spinner" />
+          <p>loading...</p>
+        </div>
+      </div>
+    </slot>
+  {/if}
+</div>
+
 
 <style>
   .moneybutton {
@@ -109,28 +139,3 @@
     }
   }
 </style>
-
-<svelte:head>
-  <script
-    on:load={() => scriptLoaded = true}
-    defer
-    src="https://www.moneybutton.com/moneybutton.js">
-
-  </script>
-</svelte:head>
-
-<div class="moneybutton">
-  <div class:hidden={!moneyButtonRendered}>
-    <div bind:this={moneyButton} />
-  </div>
-  {#if !moneyButtonRendered}
-    <slot>
-      <div class="outer">
-        <div class="inner">
-          <span class="spinner" />
-          <p>loading...</p>
-        </div>
-      </div>
-    </slot>
-  {/if}
-</div>
